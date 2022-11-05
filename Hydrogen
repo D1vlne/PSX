@@ -1,0 +1,32 @@
+local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/Vape.txt")()
+
+local win = lib:Window("Divine | ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,Color3.fromRGB(44, 120, 224), Enum.KeyCode.RightControl)
+
+local tab1 = win:Tab("Eggs")
+
+
+local HalloweenEgg = {"Pumpkin Egg", "Golden Pumpkin Egg", "Eerie Egg", "Golden Eerie Egg", "Cursed Egg"}
+
+tab1:Dropdown("Halloween Eggs",HalloweenEgg, function(currentoption)
+    if currentoption == "Pumpkin Egg" or "Golden Pumpkin Egg" or "Eerie Egg" or "Golden Eerie Egg"or "Cursed Egg" then
+        while wait() do
+            if getgenv().HatchHallowEggs == true then
+                local args = {
+                  [1] = {
+                    [1] = currentoption,
+                    [2] = getgenv().X3HatchHallowEggs
+                  }
+                }
+                workspace.__THINGS.__REMOTES:FindFirstChild("buy egg"):InvokeServer(unpack(args))
+            end
+        end
+    end
+end)
+
+tab1:Toggle("Hatch Halloween Eggs",false, function(t)
+    getgenv().HatchHallowEggs = t
+end)
+
+tab1:Toggle("Triple Open Eggs",false, function(Value)
+    getgenv().X3HatchHallowEggs = Value
+end)
