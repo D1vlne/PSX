@@ -1,0 +1,125 @@
+game:GetService("Players").LocalPlayer.Idled:connect(
+function()
+    game:GetService("VirtualUser"):Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    wait(1)
+    game:GetService("VirtualUser"):Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end)
+
+local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/Vape.txt")()
+
+local win = lib:Window("Divine | ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name,Color3.fromRGB(44, 120, 224), Enum.KeyCode.RightControl)
+
+
+local tab1 = win:Tab("e")
+
+
+
+tab1:Toggle("Auto Nearest (Low Ban Rate)",false, function(state)    
+    if state then
+        getgenv().FarmNearest = true;
+        if getgenv().FarmNearest == true then
+            for i,v in pairs(game:GetService("Workspace")["__THINGS"].Orbs:GetChildren()) do
+                v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0,0,0)
+                for i,v in pairs(game:GetService("Workspace")["__THINGS"].Lootbags:GetChildren()) do
+                    v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0,0,0)
+                end
+            end
+        end
+    else
+        getgenv().FarmNearest = false;
+    end
+end)
+
+
+
+    spawn(function()
+        while task.wait(.7) do
+            if game:GetService("Workspace")["__THINGS"].Orbs:FindFirstChildOfClass("Part") and (getgenv().FarmNearest) then
+                local TweenService = game:GetService("TweenService")
+
+                for i,v in pairs(game:GetService("Workspace")["__THINGS"].Orbs:GetChildren()) do
+                    if v:IsA("Part") and v:FindFirstChild("Orb") then
+                        v.Orb.Sunray:Destroy()
+                        TweenService:Create(
+                            v,
+                            TweenInfo.new(.3, Enum.EasingStyle.Linear),
+                            {CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame}
+                        ):Play()
+                    end
+                end
+            end
+        end
+    end)
+
+  spawn(function()
+      while game:GetService("RunService").Heartbeat:wait() do
+          if getgenv().FarmNearest then
+              wait(0.001)
+              pcall(function()
+  
+                  function FarmCoins(CoinID, PetID)
+                      game.workspace['__THINGS']['__REMOTES']["join coin"]:InvokeServer({[1] = CoinID, [2] = {[1] = PetID}})
+                      game.workspace['__THINGS']['__REMOTES']["farm coin"]:FireServer({[1] = CoinID, [2] = PetID})                
+                  end
+  
+                  function FindPets()
+                      local Returntable = {}
+                          for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Frame.Main.Pets:GetChildren()) do
+                              if v.ClassName == "TextButton" and v.Equipped.Visible then
+                                  table.insert(Returntable, v.Name)
+                              end
+                          end
+                      return Returntable
+                  end
+  
+                  local Closestcoin = tonumber(350)
+                  function BringCoins()
+                      local Returntable = {}
+                
+                      local ListCoins = game.workspace['__THINGS']['__REMOTES']["get coins"]:InvokeServer({})[1]
+                      for i,v in pairs(ListCoins) do
+                          if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.p).Magnitude < Closestcoin then
+                              local Coin = v
+                              Coin["index"] = i
+                              table.insert(Returntable, Coin)
+                              Closestcoin = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - v.p).Magnitude
+                          end
+                      end
+                      return Returntable
+                  end
+  
+                  local petthingy = FindPets()
+  
+                  local cointhiny = BringCoins()
+  
+                  for i = 1, #cointhiny do
+                      coroutine.wrap(function()
+                          FarmCoins(cointhiny[i].index, petthingy[i%#petthingy+1])
+                      end)()
+                  end
+            end)
+          end
+      end
+  end)
+ 
+
+spawn(function()
+    while task.wait(.7) do
+        if game:GetService("Workspace")["__THINGS"].Orbs:FindFirstChildOfClass("Part") and (getgenv().FarmNearest) then
+            local TweenService = game:GetService("TweenService")
+
+            for i,v in pairs(game:GetService("Workspace")["__THINGS"].Orbs:GetChildren()) do
+                if v:IsA("Part") and v:FindFirstChild("Orb") then
+                    v.Orb.Sunray:Destroy()
+                    TweenService:Create(
+                        v,
+                        TweenInfo.new(.3, Enum.EasingStyle.Linear),
+                        {CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame}
+                    ):Play()
+                end
+            end
+        end
+    end
+end)
+
+tab1:Label("Label")
